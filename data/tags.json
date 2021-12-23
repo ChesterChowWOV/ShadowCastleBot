@@ -1,1 +1,22 @@
-{"hello": {"author": 788274635871092777, "content": "test"}, "faxiefy": {"author": 788274635871092777, "content": "faxiefy is cool"}}
+{
+  "hello": {
+    "author": 788274635871092777,
+    "content": "test"
+  },
+  "faxiefy": {
+    "author": 788274635871092777,
+    "content": "faxiefy is cool"
+  },
+  "big brain moment": {
+    "author": 788274635871092777,
+    "content": "<:big_brain_moment:922738766211325993>"
+  },
+  "nata": {
+    "author": 788274635871092777,
+    "content": "Crazy inviter"
+  },
+  "gtbc": {
+    "author": 788274635871092777,
+    "content": "<:bonk:923050743454396467> Go to \ud83d\udc49<#921277195303927822> \ud83d\udc48 <:bonk:923050743454396467> \ud83d\ude02"
+  }
+}

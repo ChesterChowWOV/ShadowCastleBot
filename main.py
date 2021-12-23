@@ -21,7 +21,7 @@ def get_prefix(bot, msg):
 with open("data/blacklist.json") as f:
   blacklist = json.load(f)
 
-bot = commands.Bot(command_prefix=get_prefix, case_insensitive=True,intents=discord.Intents.all(), allowed_mentions=discord.AllowedMentions.all())
+bot = commands.Bot(command_prefix=get_prefix, case_insensitive=True,intents=discord.Intents.all(), allowed_mentions=discord.AllowedMentions.none())
 
 ignored_cogs = []
 for fn in os.listdir("./cogs"):
