@@ -1,0 +1,4 @@
+data/blacklist.json
+data/prefixes.json
+data/tags.json
+cogs/__pycache__/*
