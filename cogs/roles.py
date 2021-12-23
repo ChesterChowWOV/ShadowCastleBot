@@ -56,7 +56,10 @@ class Roles(commands.Cog):
 
   @commands.Cog.listener()
   async def on_button_click(self, res):
-    role = discord.utils.get(res.guild.roles, id=int(res.component.id))
+    try:
+      role = discord.utils.get(res.guild.roles, id=int(res.component.id))
+    except ValueError:
+      return
     if role is not None:
       if role.id in [r.id for r in res.user.roles]:
         await res.user.remove_roles(role)
