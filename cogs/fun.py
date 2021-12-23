@@ -38,7 +38,7 @@ class Fun(commands.Cog):
         data.update({name.lower(): {"author": ctx.author.id, "content": content}})
         with open("data/tags.json", "w") as f:
             json.dump(data, f, indent=2)
-        await ctx.send("\N{OK HAND SIGN}")
+        await ctx.ok()
 
     @tag.command()
     async def edit(self, ctx, name, *, content):
@@ -55,6 +55,7 @@ class Fun(commands.Cog):
       }
       with open("data/tags.json", "w") as f:
         json.dump(data, f, indent=2)
+      await ctx.ok()
 
 
 def setup(bot):

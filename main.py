@@ -21,7 +21,18 @@ def get_prefix(bot, msg):
 with open("data/blacklist.json") as f:
   blacklist = json.load(f)
 
-bot = commands.Bot(command_prefix=get_prefix, case_insensitive=True,intents=discord.Intents.all(), allowed_mentions=discord.AllowedMentions.none())
+class VibeBot(commands.Bot):
+  def __init__(self, **kwargs):
+    super().__init__(**kwargs)
+  
+  async def get_context(self, message, *, cls=None):
+    return await super().get_context(message, cls=cls or Context)
+
+bot = VibeBot(command_prefix=get_prefix, case_insensitive=True,intents=discord.Intents.all(), allowed_mentions=discord.AllowedMentions.none())
+
+class Context(commands.Context):
+  async def ok(self):
+    await self.send("\N{OK HAND SIGN}")
 
 ignored_cogs = []
 for fn in os.listdir("./cogs"):
