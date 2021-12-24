@@ -14,9 +14,16 @@ class Management(commands.Cog):
     ))
   @commands.command()
   @commands.has_permissions(ban_members=True)
-  async def ban(self, ctx, member: typing.Union[discord.Member, discord.User], delete: typing.Optional[bool]=True, *, reason: typing.Optional[str]=None):
-    await ctx.guild.ban(member, reason=reason, delete_message_days=7 if delete else 0)
-    await ctx.send(ctx.author.mention+": \N{OK HAND SIGN} Banned "+str(member)+".")
+  async def ban(self, ctx, user: typing.Union[discord.Member, discord.User], delete: typing.Optional[bool]=True, *, reason: typing.Optional[str]=None):
+    await ctx.guild.ban(user, reason=reason, delete_message_days=7 if delete else 0)
+    await ctx.send(ctx.author.mention+": \N{OK HAND SIGN} Banned "+str(user)+".")
+
+  @commands.command()
+  @commands.has_permissions(ban_members=True)
+  async def kick(self, ctx, member: typing.Union[discord.Member, discord.User], *, reason: typing.Optional[str]=None):
+    await ctx.guild.kick(member, reason=reason)
+    await ctx.send(ctx.author.mention+": \N{OK HAND SIGN} Kicked "+str(member)+".")
+  
   @commands.command()
   @commands.is_owner()
   async def set(self, ctx, channel: discord.TextChannel):
