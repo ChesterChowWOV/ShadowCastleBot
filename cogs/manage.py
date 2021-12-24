@@ -19,13 +19,9 @@ class Management(commands.Cog):
     await ctx.send(ctx.author.mention+": \N{OK HAND SIGN} Banned "+str(member)+".")
   @commands.command()
   @commands.is_owner()
-  async def ssl(self, ctx):
-    embed = discord.Embed(
-      title="**__Staff List__**",
-      colour=discord.Colour.green()
-    )
-    owner, co_owner,head_admin, admin, mod = ctx.guild.get_role()
-    embed.description = f""
+  async def set(self, ctx, channel: discord.TextChannel):
+    self.bot.one_word_story = channel.id
+    await ctx.ok()
   @commands.command(aliases=["bl"])
   @commands.is_owner()
   async def blacklist(self, ctx, user: discord.User, mode: typing.Optional[bool] = True):

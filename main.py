@@ -1,5 +1,5 @@
 from online import start
-from discord.ext import commands
+from discord.ext import commands, tasks
 from discord_components import *
 import discord
 import os
@@ -8,6 +8,9 @@ import json
 import logs
 import traceback
 import sys
+import textwrap
+import io
+from contextlib import redirect_stdout
 
 file = open('data/prefixes.json')
 prefixes = json.load(file)
@@ -28,7 +31,14 @@ class VibeBot(commands.Bot):
   async def get_context(self, message, *, cls=None):
     return await super().get_context(message, cls=cls or Context)
 
-bot = VibeBot(command_prefix=get_prefix, case_insensitive=True,intents=discord.Intents.all(), allowed_mentions=discord.AllowedMentions.none())
+bot = VibeBot(
+  command_prefix=get_prefix, 
+  case_insensitive=True,
+  intents=discord.Intents.all(),
+  allowed_mentions=discord.AllowedMentions.none()
+  
+)
+bot.one_word_story = 923587278339702784
 
 class Context(commands.Context):
   async def ok(self):
@@ -63,7 +73,7 @@ async def reload(ctx, ext):
 @bot.listen()
 async def on_message(msg):
   if msg.author.bot: return
-  if msg.channel.id != 921277194959998976: return
+  if msg.channel.id != bot.one_word_story: return
   length = len(msg.content.split(" "))
   if length != 1:
     return await msg.reply(f"Hey {msg.author.display_name}, you sent {length} words! This channel is a one word story channel, so you can only use one word to continue the last word's story.", components=[[Button(label="Delete my message", style=ButtonStyle.green), Button(label="Ignore warning", style=ButtonStyle.red)]])
@@ -95,5 +105,65 @@ async def on_button_click(res):
   await message.delete()
   await res.message.delete()
 
+def cleanup_code(content):
+  """Automatically removes code blocks from the code."""
+        # remove ```py\n```
+  if content.startswith('```') and content.endswith('```'):
+    return '\n'.join(content.split('\n')[1:-1])
+  return content.strip('` \n')
+
+@bot.command(hidden=True, name='eval')
+@commands.is_owner()
+async def _eval(ctx, *, body: str):
+  env = {
+    'bot': bot,
+    'ctx': ctx,
+    'channel': ctx.channel,
+    'author': ctx.author,
+    'guild': ctx.guild,
+    'message': ctx.message
+  }
+
+  env.update(globals())
+
+  body = cleanup_code(body)
+  stdout = io.StringIO()
+
+  to_compile = f'async def func():\n{textwrap.indent(body, "  ")}'
+
+  try:
+    exec(to_compile, env)
+  except Exception as e:
+    return await ctx.send(f'```py\n{e.__class__.__name__}: {e}\n```')
+
+  func = env['func']
+  try:
+    with redirect_stdout(stdout):
+      ret = await func()
+  except Exception as e:
+    value = stdout.getvalue()
+    await ctx.send(f'```py\n{value}{traceback.format_exc()}\n```')
+  else:
+    value = stdout.getvalue()
+    try:
+      await ctx.message.add_reaction('\u2705')
+    except:
+      pass
+
+    if ret is None:
+      if value:
+        await ctx.send(f'```py\n{value}\n```')
+    else:
+      await ctx.send(f'```py\n{value}{ret}\n```')
+
+@tasks.loop(seconds=20)
+async def keep_chat_alive():
+  await (bot.get_channel(921277195303927821)).send("Keeping the chat alive")
+
+@keep_chat_alive.before_loop
+async def wait():
+  await bot.wait_until_ready()
+
+# keep_chat_alive.start()
 start()
 bot.run(os.environ["TOKEN"])
